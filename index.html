@@ -1,116 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="An industry-independent business planning questionnaire by KF Biz.">
-<title>KF Biz | Business Plan Questionnaire</title>
-<style>
-:root{--ink:#172b3a;--muted:#5d6b75;--blue:#174b69;--line:#dce4e8;--paper:#fff;--wash:#f4f7f8;--accent:#d9eaf1}
-*{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{background:var(--blue);color:white;padding:34px 20px}header .wrap,main{max-width:900px;margin:auto} .brand{font-size:.83rem;letter-spacing:.14em;font-weight:800;text-transform:uppercase;opacity:.85}h1{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.12;margin:.55rem 0}header p{max-width:680px;color:#e5eef2;margin:0}
-main{padding:24px 16px 56px}.notice{background:#edf5f8;border-left:4px solid #5b8ca4;padding:14px 16px;border-radius:6px;margin-bottom:20px;color:#274454}
-.progress-wrap{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.9rem;margin-bottom:8px}.progress{height:7px;background:#dfe7eb;border-radius:8px;overflow:hidden;margin-bottom:22px}.progress span{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
-fieldset{border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:22px;margin:0 0 18px;box-shadow:0 2px 8px #172b3a08}legend{font-size:1.2rem;font-weight:750;padding:0 7px} .hint{margin:-2px 0 18px;color:var(--muted);font-size:.93rem}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field.full{grid-column:1/-1}label{font-weight:650;font-size:.94rem}.optional{font-weight:400;color:var(--muted);font-size:.83rem}
-input,select,textarea{width:100%;border:1px solid #c9d5db;border-radius:7px;padding:11px 12px;font:inherit;color:var(--ink);background:white}textarea{min-height:105px;resize:vertical}input:focus,select:focus,textarea:focus{outline:3px solid #d6eaf3;border-color:#5385a0}
-.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}button{border:0;border-radius:8px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e3eaee;color:var(--ink)}button:hover{filter:brightness(.96)}.small{font-size:.9rem;color:var(--muted);margin-top:10px}
-#status{margin-top:12px;font-weight:650;color:#205a3d}.hidden{display:none!important}footer{text-align:center;padding:20px;color:var(--muted);font-size:.9rem}
-@media(max-width:620px){.grid{grid-template-columns:1fr}fieldset{padding:17px}.field.full{grid-column:auto}.actions button{width:100%}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url=interactive.html">
+  <link rel="canonical" href="interactive.html">
+  <title>KF Biz | Interactive Business Plan Creator</title>
+  <script>
+    window.location.replace(new URL("interactive.html", window.location.href).href);
+  </script>
 </head>
 <body>
-<header><div class="wrap"><div class="brand">KF Biz · Business Planning</div><h1>Business Plan Questionnaire</h1><p>A guided starting point for describing your business idea, customers, market, operations and next steps.</p></div></header>
-<main>
-<div class="notice"><strong>New:</strong> Try the <a href="interactive.html">interactive Business Plan Creator</a> with step-by-step sections, saved progress and business-plan export.</div>
-<div class="notice"><strong>How this works:</strong> Answer in your own words. If you do not know something yet, write “Not sure yet.” Your answers can be downloaded as a Markdown draft for review and development. This questionnaire does not calculate revenue, costs, profitability, cash flow or loan repayment capacity.</div>
-<div class="progress-wrap"><span id="progressText">0 of 20 core questions answered</span><span>Draft stays in this browser until you download it</span></div><div class="progress"><span id="progressBar"></span></div>
-<form id="planForm">
-<fieldset><legend>1. Purpose and business basics</legend><p class="hint">Tell us what you are planning and why you need a business plan.</p><div class="grid">
-<div class="field"><label for="purpose">What is this business plan for? *</label><select id="purpose" name="purpose" required><option value="">Choose one</option><option>Starttiraha application preparation</option><option>Planning a new business</option><option>Finnvera or other lender financing application</option><option>Developing an existing business</option><option>Other purpose</option></select></div>
-<div class="field"><label for="stage">Current business stage *</label><select id="stage" name="stage" required><option value="">Choose one</option><option>Idea stage</option><option>Preparing to register or launch</option><option>Registered but not yet operating</option><option>Operating part-time</option><option>Operating full-time</option><option>Expanding or changing an existing business</option></select></div>
-<div class="field"><label for="businessName">Business name <span class="optional">(if known)</span></label><input id="businessName" name="businessName" placeholder="Proposed or registered name"></div>
-<div class="field"><label for="location">Where will the business operate? *</label><input id="location" name="location" required placeholder="City/region, country, online or multiple locations"></div>
-<div class="field"><label for="industry">Industry or field *</label><input id="industry" name="industry" required placeholder="e.g. cleaning, restaurant, IT, consulting"></div>
-<div class="field"><label for="startDate">Planned start date <span class="optional">(if known)</span></label><input id="startDate" name="startDate" placeholder="e.g. spring 2027"></div>
-<div class="field full"><label for="summary">Describe the business idea in a few sentences. *</label><textarea id="summary" name="summary" required placeholder="What do you want to do, for whom, and in what way?"></textarea></div>
-<div class="field full"><label for="goals">What do you want the business to achieve in its first 1–3 years?</label><textarea id="goals" name="goals" placeholder="Describe your aims without needing to calculate financial forecasts."></textarea></div>
-</div></fieldset>
-<fieldset><legend>2. Entrepreneur and readiness</legend><p class="hint">Explain who will run the business and what preparation has been done.</p><div class="grid">
-<div class="field full"><label for="founder">Who is starting or running the business? *</label><textarea id="founder" name="founder" required placeholder="Relevant work experience, education, skills, languages or professional qualifications."></textarea></div>
-<div class="field full"><label for="motivation">Why do you want to start or develop this business?</label><textarea id="motivation" name="motivation"></textarea></div>
-<div class="field full"><label for="readiness">What have you already done to prepare?</label><textarea id="readiness" name="readiness" placeholder="Research, training, customer conversations, permits, suppliers, test sales, etc."></textarea></div>
-<div class="field full"><label for="gaps">What skills, resources or support do you still need?</label><textarea id="gaps" name="gaps" placeholder="For example, industry knowledge, Finnish-language support, permits or business mentoring."></textarea></div>
-</div></fieldset>
-<fieldset><legend>3. Products, services and customer value</legend><p class="hint">Describe what customers will actually receive and why it matters to them.</p><div class="grid">
-<div class="field full"><label for="offer">What products or services will you provide? *</label><textarea id="offer" name="offer" required placeholder="List your main offers and explain what each includes."></textarea></div>
-<div class="field full"><label for="value">What customer problem, need or desire does your offer address? *</label><textarea id="value" name="value" required></textarea></div>
-<div class="field full"><label for="difference">Why might customers choose you instead of another solution?</label><textarea id="difference" name="difference" placeholder="Convenience, expertise, quality, specialisation, accessibility, customer experience, etc."></textarea></div>
-<div class="field full"><label for="delivery">How will customers receive the product or service?</label><textarea id="delivery" name="delivery" placeholder="At a customer location, in a shop, online, by appointment, delivery, subscription, etc."></textarea></div>
-</div></fieldset>
-<fieldset><legend>4. Customers, market and competitors</legend><p class="hint">Use evidence where possible. If something is an assumption, label it as one.</p><div class="grid">
-<div class="field full"><label for="customers">Who are your main target customers? *</label><textarea id="customers" name="customers" required placeholder="Describe customer groups, location, needs and buying behaviour."></textarea></div>
-<div class="field full"><label for="demand">What evidence suggests that customers need or want this offer?</label><textarea id="demand" name="demand" placeholder="Customer interviews, public statistics, local observations, enquiries, pilot sales or other research."></textarea></div>
-<div class="field full"><label for="competitors">Who are your main competitors or alternatives? *</label><textarea id="competitors" name="competitors" required placeholder="Name known competitors if possible, and describe what customers might choose instead."></textarea></div>
-<div class="field full"><label for="marketPosition">How will you position your business in the market?</label><textarea id="marketPosition" name="marketPosition" placeholder="For example: specialist, convenient local provider, premium service or affordable basic option."></textarea></div>
-<div class="field full"><label for="researchGaps">What market information do you still need to verify?</label><textarea id="researchGaps" name="researchGaps" placeholder="Unanswered questions or assumptions to test."></textarea></div>
-</div></fieldset>
-<fieldset><legend>5. Marketing and sales</legend><p class="hint">Explain how potential customers will discover, evaluate and buy from you.</p><div class="grid">
-<div class="field full"><label for="channels">How will you reach your target customers? *</label><textarea id="channels" name="channels" required placeholder="Website, social media, referrals, partnerships, local advertising, marketplaces, direct sales, etc."></textarea></div>
-<div class="field full"><label for="salesProcess">How will a customer move from first contact to purchase?</label><textarea id="salesProcess" name="salesProcess" placeholder="Enquiry, consultation, quote, booking, contract, purchase or follow-up."></textarea></div>
-<div class="field full"><label for="retention">How will you build trust and encourage repeat business or recommendations?</label><textarea id="retention" name="retention"></textarea></div>
-</div></fieldset>
-<fieldset><legend>6. Operations and practical arrangements</legend><p class="hint">Describe how the business will work day to day.</p><div class="grid">
-<div class="field full"><label for="workflow">What are the main steps in delivering your product or service?</label><textarea id="workflow" name="workflow" placeholder="From customer enquiry to delivery and after-sales support."></textarea></div>
-<div class="field full"><label for="resources">What facilities, equipment, software, materials or suppliers will you need?</label><textarea id="resources" name="resources"></textarea></div>
-<div class="field full"><label for="partners">Will you work with partners, subcontractors or employees?</label><textarea id="partners" name="partners" placeholder="Describe roles, responsibilities and any planned external support."></textarea></div>
-<div class="field full"><label for="compliance">What permits, registrations, insurance, qualifications or other rules may apply?</label><textarea id="compliance" name="compliance" placeholder="For Finland, list items to verify with the relevant authority or professional adviser."></textarea></div>
-</div></fieldset>
-<fieldset><legend>7. Risks, funding purpose and next steps</legend><p class="hint">Identify challenges and how you will respond. Do not enter financial projections here.</p><div class="grid">
-<div class="field full"><label for="risks">What are the main risks or obstacles, and how could you reduce them? *</label><textarea id="risks" name="risks" required placeholder="Customer demand, competition, skills, permits, suppliers, seasonality, capacity or other risks."></textarea></div>
-<div class="field full"><label for="fundingUse">If you need funding, what would it be used for and why?</label><textarea id="fundingUse" name="fundingUse" placeholder="Describe intended use, such as equipment, working arrangements, product development or launch activities. Leave amounts and forecasts for the separate financial tool."></textarea></div>
-<div class="field full"><label for="milestones">What are the main actions and milestones before and after launch? *</label><textarea id="milestones" name="milestones" required placeholder="List the next steps in a sensible order and add target dates if known."></textarea></div>
-<div class="field full"><label for="support">What decision, support or feedback do you need next?</label><textarea id="support" name="support"></textarea></div>
-</div></fieldset>
-<fieldset id="starttirahaBox" class="hidden"><legend>Additional questions: Starttiraha preparation</legend><p class="hint">These questions help organise information relevant to discussing an application. They do not determine eligibility.</p><div class="grid">
-<div class="field full"><label for="fullTime">Do you plan to work full-time in the business? Explain your intended working arrangement.</label><textarea id="fullTime" name="fullTime"></textarea></div>
-<div class="field full"><label for="starttirahaTiming">Have you already started full-time business activity, or are you still preparing?</label><textarea id="starttirahaTiming" name="starttirahaTiming" placeholder="Give the actual status and dates if known. Check current instructions with the relevant employment authority before applying."></textarea></div>
-<div class="field full"><label for="livelihood">How do you plan to support yourself during the initial business phase?</label><textarea id="livelihood" name="livelihood" placeholder="Describe the plan in words; any personal or business financial calculations belong in the separate financial tool."></textarea></div>
-</div></fieldset>
-<fieldset id="lenderBox" class="hidden"><legend>Additional questions: Finnvera or lender preparation</legend><p class="hint">Focus on the business rationale, use of funds and readiness. Detailed financial forecasts must be prepared separately.</p><div class="grid">
-<div class="field full"><label for="fundingNeed">What business need or development goal makes external financing relevant?</label><textarea id="fundingNeed" name="fundingNeed"></textarea></div>
-<div class="field full"><label for="fundingAlternatives">What alternatives have you considered, and why is financing appropriate?</label><textarea id="fundingAlternatives" name="fundingAlternatives"></textarea></div>
-<div class="field full"><label for="repaymentNarrative">What will help the business build a reliable basis for meeting its obligations?</label><textarea id="repaymentNarrative" name="repaymentNarrative" placeholder="Describe customers, operations, contracts, experience and risk controls. Do not estimate repayment capacity here."></textarea></div>
-</div></fieldset>
-<div class="actions"><button class="primary" type="button" id="downloadBtn">Download answers as business plan draft (.md)</button><button class="secondary" type="button" id="printBtn">Print / save as PDF</button><button class="secondary" type="reset">Clear answers</button></div>
-<p class="small">The downloaded draft is a structured starting point, not a verified application or a guarantee of funding. Review facts, add evidence and check current authority or lender requirements before submitting.</p><div id="status" role="status" aria-live="polite"></div>
-</form></main><footer>KF Biz · Business planning for entrepreneurs in Finland</footer>
-<script>
-const form=document.getElementById('planForm');
-const purpose=document.getElementById('purpose');
-const startBox=document.getElementById('starttirahaBox');
-const lenderBox=document.getElementById('lenderBox');
-const coreIds=['purpose','stage','location','industry','summary','founder','offer','value','customers','competitors','channels','risks','milestones','businessName','startDate','goals','motivation','readiness','gaps','difference'];
-function updateMode(){startBox.classList.toggle('hidden',!purpose.value.toLowerCase().includes('starttiraha'));lenderBox.classList.toggle('hidden',!purpose.value.toLowerCase().includes('lender')&&!purpose.value.toLowerCase().includes('finnvera'))}
-function updateProgress(){let answered=coreIds.filter(id=>{const el=document.getElementById(id);return el&&el.value.trim()!==''}).length;document.getElementById('progressText').textContent=answered+' of '+coreIds.length+' core questions answered';document.getElementById('progressBar').style.width=(answered/coreIds.length*100)+'%'}
-purpose.addEventListener('change',updateMode);form.addEventListener('input',updateProgress);form.addEventListener('reset',()=>setTimeout(()=>{updateMode();updateProgress();document.getElementById('status').textContent=''},0));
-function val(id){const el=document.getElementById(id);return el&&!el.closest('.hidden')?el.value.trim():''}
-function buildDraft(){const sections=[
-['1. Executive summary',[['Business idea','summary'],['Business name','businessName'],['Location','location'],['Industry','industry'],['Current stage','stage'],['Planned start date','startDate'],['Goals for the first 1–3 years','goals']]],
-['2. Entrepreneur profile and readiness',[['Founder and relevant experience','founder'],['Motivation','motivation'],['Preparation completed','readiness'],['Skills or support still needed','gaps']]],
-['3. Products, services and value proposition',[['Products and services','offer'],['Customer need addressed','value'],['Differentiation','difference'],['Delivery method','delivery']]],
-['4. Target customers and market',[['Target customers','customers'],['Evidence of demand','demand'],['Competitors and alternatives','competitors'],['Market positioning','marketPosition'],['Research gaps and assumptions','researchGaps']]],
-['5. Marketing and sales strategy',[['Customer acquisition channels','channels'],['Sales process','salesProcess'],['Retention and referrals','retention']]],
-['6. Operations and compliance',[['Delivery workflow','workflow'],['Resources and suppliers','resources'],['Partners, subcontractors or employees','partners'],['Permits and rules to verify','compliance']]],
-['7. Risks and mitigation',[['Main risks and responses','risks']]],
-['8. Funding rationale (non-financial)',[['Purpose of funding','fundingUse']]],
-['9. Implementation roadmap',[['Milestones and next actions','milestones'],['Support or feedback needed','support']]],
-['10. Application-specific information',[['Starttiraha: intended working arrangement','fullTime'],['Starttiraha: business activity timing','starttirahaTiming'],['Starttiraha: initial personal livelihood plan','livelihood'],['Lender: reason for external financing','fundingNeed'],['Lender: alternatives considered','fundingAlternatives'],['Lender: business basis for meeting obligations','repaymentNarrative']]]
-];let out='# Business Plan Draft\n\n**Prepared using:** KF Biz Business Plan Questionnaire  \n**Purpose:** '+(val('purpose')||'Not specified')+'  \n**Date prepared:** '+new Date().toLocaleDateString()+'\n\n> Working draft for review. Confirm all facts, assumptions and applicable requirements before using this document in an application. Financial forecasts and calculations are not included and should be prepared separately.\n';
-sections.forEach(([title,fields])=>{let rows=fields.map(([label,id])=>[label,val(id)]).filter(x=>x[1]);if(rows.length){out+='\n## '+title+'\n\n';rows.forEach(([label,value])=>{out+='### '+label+'\n\n'+value+'\n\n'})}});
-out+='\n## 11. Financial documents to prepare separately\n\nThis business plan draft does not calculate revenue, costs, profitability, cash flow, break-even or repayment capacity. Attach separately prepared financial forecasts and supporting evidence where required by the relevant authority or lender.\n\n## 12. Final review checklist\n\n- [ ] Verify market claims and add sources or evidence.\n- [ ] Confirm permits, registrations, insurance and industry-specific obligations.\n- [ ] Check the latest requirements of the relevant authority or lender.\n- [ ] Prepare separate financial forecasts and supporting documents.\n- [ ] Review the plan for accuracy and consistency before submission.\n\n*Funding or grant decisions are made by the relevant authority or lender; this draft does not guarantee approval.*\n';return out}
-document.getElementById('downloadBtn').addEventListener('click',()=>{if(!form.reportValidity())return;const blob=new Blob([buildDraft()],{type:'text/markdown;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='kf-biz-business-plan-draft.md';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);document.getElementById('status').textContent='Your draft download should now be available.'});
-document.getElementById('printBtn').addEventListener('click',()=>window.print());
-updateMode();updateProgress();
-</script>
-</body></html>
+  <p>Opening the <a href="interactive.html">KF Biz Interactive Business Plan Creator</a>…</p>
+</body>
+</html>
