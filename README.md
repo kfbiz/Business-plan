@@ -1,13 +1,17 @@
-# KF Biz Business Plan Creator
+# KF Biz Interactive Business Plan Creator
 
-An industry-independent business planning questionnaire for new and existing businesses in Finland.
+An industry-independent, step-by-step business planning tool for new and existing businesses in Finland. This repository maintains **one questionnaire experience only**: the Interactive Business Plan Creator.
 
-## Interactive JavaScript tool
+## Open the tool
 
-Open [interactive.html](./interactive.html) to use the step-by-step questionnaire. It loads its interactive behaviour from [app.js](./app.js) and runs in a modern browser without a build system or external libraries.
+- [Open the Interactive Business Plan Creator](./interactive.html)
+- [Application logic](./app.js)
 
-Features include:
-- Step-by-step sections with back and continue navigation.
+When GitHub Pages is enabled, the repository homepage redirects to `interactive.html`. The tool uses plain HTML, CSS and JavaScript and requires no build system or external libraries.
+
+## Features
+
+- Step-by-step sections with Back and Continue navigation.
 - Questions informed by the topics in the Job Market Finland business-plan document supplied for this project.
 - Conditional Starttiraha and Finnvera/lender prompts, plus employer-planning questions when relevant.
 - Multiple-choice checklists for skills, marketing channels, sales channels and risks.
@@ -17,20 +21,18 @@ Features include:
 - Download a Markdown business-plan draft or print/save using the browser's PDF function.
 - Responsive layout for desktop and mobile.
 
-The [questionnaire guide](./QUESTIONNAIRE-GUIDE.md) contains the grouped question set and is useful for reviewing the tool's coverage.
-
 ## How to run
 
-1. Download or clone this repository, or open it with GitHub Pages if Pages is enabled.
+1. Open the published GitHub Pages site, or download the repository.
 2. Keep `interactive.html` and `app.js` in the same folder.
 3. Open `interactive.html` in a modern browser.
-4. Choose the purpose and work through the sections. Use Review answers to check your responses before exporting.
-
-The existing [index.html](./index.html) also links to the interactive version.
+4. Choose the purpose and work through the sections. Review your answers before exporting.
 
 ## Privacy and storage
 
 The tool runs in the user's browser and does not send answers to a KF Biz server. It saves progress in the browser's local storage on that device. This means progress may not follow the user to another browser or device, and clearing browser data may remove it. Avoid entering unnecessary sensitive personal information. Download the draft to keep a separate copy.
+
+**Important:** GitHub Pages is public hosting. Keeping the link off your marketing pages does not restrict access or make the tool password-protected. Do not use the public URL as a security control for confidential client information.
 
 ## Scope boundary: financial calculations are separate
 
