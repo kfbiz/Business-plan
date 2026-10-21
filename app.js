@@ -105,6 +105,11 @@ const sections = [
 ];
 
 const STORAGE_KEY = "kfbiz-business-plan-v1";
+// Publishable keys are designed for browser use. Database permissions are enforced by RLS.
+// Never place a Supabase secret/service-role key in this file.
+const SUPABASE_URL = "https://wtkvxytoqrpnssfcobky.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_qzvUQZmQLcAyyeH9SvcqbA_KDmrTO7X";
+const SUBMISSIONS_ENDPOINT = SUPABASE_URL + "/rest/v1/business_plan_submissions";
 let answers = {};
 let current = 0;
 try { answers = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {}; } catch (_) { answers = {}; }
@@ -165,6 +170,60 @@ function markdownDraft(){
  return out;
 }
 function downloadDraft(){const blob=new Blob([markdownDraft()],{type:"text/markdown;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="kf-biz-business-plan-draft.md";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);statusEl.textContent="Your business-plan draft download should now be available.";}
+
+const submissionForm = document.getElementById("submissionForm");
+submissionForm.addEventListener("submit", async (event) => {
+ event.preventDefault();
+ statusEl.textContent = "";
+ if (!submissionForm.reportValidity()) return;
+ const submitButton = document.getElementById("submitToKfBizBtn");
+ const name = document.getElementById("clientName").value.trim();
+ const email = document.getElementById("clientEmail").value.trim();
+ const consent = document.getElementById("submissionConsent").checked;
+ if (!name || !email || !consent) {
+  statusEl.textContent = "Please enter your name and email address and agree to the privacy notice.";
+  return;
+ }
+ if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+  statusEl.textContent = "Please enter a valid email address.";
+  return;
+ }
+ const originalText = submitButton.textContent;
+ submitButton.disabled = true;
+ submitButton.textContent = "Submitting…";
+ try {
+  const payload = {
+   client_name: name,
+   client_email: email,
+   answers: answers,
+   consented_at: new Date().toISOString(),
+   source: "KF Biz Interactive Business Plan Creator"
+  };
+  const response = await fetch(SUBMISSIONS_ENDPOINT, {
+   method: "POST",
+   headers: {
+    "Content-Type": "application/json",
+    "apikey": SUPABASE_PUBLISHABLE_KEY,
+    "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+    "Prefer": "return=minimal"
+   },
+   body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+   let detail = "";
+   try { detail = (await response.json()).message || ""; } catch (_) {}
+   throw new Error(detail || "The database did not accept the submission (HTTP " + response.status + ").");
+  }
+  statusEl.textContent = "Your answers have been submitted to KF Biz. You may also download a copy below.";
+  submitButton.textContent = "Submitted successfully";
+ } catch (error) {
+  console.error("KF Biz submission failed:", error);
+  statusEl.textContent = "Submission failed. Your answers remain in this browser. Please try again later or download the draft and contact KF Biz. " + (error && error.message ? error.message : "");
+  submitButton.disabled = false;
+  submitButton.textContent = originalText;
+ }
+});
+
 document.getElementById("editBtn").addEventListener("click",()=>{current=0;render();statusEl.textContent="";});
 document.getElementById("reviewDownloadBtn").addEventListener("click",downloadDraft);
 document.getElementById("reviewPrintBtn").addEventListener("click",()=>window.print());
