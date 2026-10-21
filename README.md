@@ -30,9 +30,15 @@ When GitHub Pages is enabled, the repository homepage redirects to `interactive.
 
 ## Privacy and storage
 
-The tool runs in the user's browser and does not send answers to a KF Biz server. It saves progress in the browser's local storage on that device. This means progress may not follow the user to another browser or device, and clearing browser data may remove it. Avoid entering unnecessary sensitive personal information. Download the draft to keep a separate copy.
+The tool saves progress in the user's browser local storage on that device. When a user submits the completed questionnaire, their name, email address, answers and consent timestamp are sent to the KF Biz Supabase database. The public browser key is publishable only; database permissions must be configured using the SQL setup file so anonymous visitors can insert submissions but cannot read, update or delete any submissions. Users should avoid entering unnecessary sensitive personal information. PDF/Markdown downloads remain available as optional copies.
 
 **Important:** GitHub Pages is public hosting. Keeping the link off your marketing pages does not restrict access or make the tool password-protected. Do not use the public URL as a security control for confidential client information.
+
+## Supabase database setup
+
+Before enabling client submissions, open the Supabase SQL Editor for the KF Biz project and run [`supabase-setup.sql`](./supabase-setup.sql). It creates the submissions table, enables row-level security, grants anonymous visitors insert-only access, and denies public read/update/delete access. Check the SQL and test with a dummy submission before collecting real client data. The publishable key is included in browser code by design; never add a secret or service-role key to this repository. This insert-only setup prevents public reading but does not by itself prevent spam or abusive submissions. Add a server-side Edge Function with rate limiting and bot protection before wider public use.
+
+Client submissions contain contact details and potentially commercially sensitive business information. Maintain an appropriate privacy notice, access controls, retention period and deletion process before collecting real submissions. The privacy link in the tool points to `https://kfbiz.github.io/privacy.html`; verify that this page exists and accurately describes Supabase as a processor before launch.
 
 ## Scope boundary: financial calculations are separate
 
