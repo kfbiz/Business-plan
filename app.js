@@ -184,10 +184,6 @@ submissionForm.addEventListener("submit", async (event) => {
   statusEl.textContent = "Please enter your name and email address and agree to the privacy notice.";
   return;
  }
- if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-  statusEl.textContent = "Please enter a valid email address.";
-  return;
- }
  const originalText = submitButton.textContent;
  submitButton.disabled = true;
  submitButton.textContent = "Submitting…";
