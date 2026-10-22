@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>KF Biz | Private Client Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0"></script>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17212b;background:#f4f6f8;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}
+    .top{background:#122b3a;color:#fff;padding:20px max(20px,calc((100vw - 1240px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{font-weight:800;letter-spacing:.04em}.top small{display:block;color:#c8d5dc;margin-top:4px}
+    main{max-width:1240px;margin:28px auto;padding:0 20px}.panel{background:#fff;border:1px solid #dce3e8;border-radius:14px;padding:22px;box-shadow:0 4px 18px #162b3a0a}
+    .hidden{display:none!important}.muted{color:#657582}.error{color:#a52222;background:#fff0f0;border:1px solid #f0caca;padding:12px;border-radius:8px}.notice{color:#425866;font-size:.9rem}
+    h1{font-size:1.7rem;margin:0 0 8px}h2{font-size:1.15rem;margin:0 0 16px}p{line-height:1.5}
+    label{display:block;font-size:.86rem;font-weight:650;margin:0 0 6px;color:#334753}input,select,textarea{width:100%;border:1px solid #cbd5dc;border-radius:8px;padding:10px 11px;background:#fff;color:#17212b}
+    textarea{min-height:100px;resize:vertical}button{border:0;border-radius:8px;padding:10px 14px;font-weight:700;background:#176b63;color:#fff}button.secondary{background:#e8eef1;color:#203541}button:disabled{opacity:.55;cursor:wait}
+    .login{max-width:440px;margin:8vh auto}.field{margin-bottom:14px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}
+    .metric{background:#fff;border:1px solid #dce3e8;border-radius:12px;padding:18px}.metric span{display:block;color:#647582;font-size:.85rem}.metric strong{display:block;font-size:1.7rem;margin-top:8px;overflow-wrap:anywhere}
+    .workspace{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.5fr);gap:18px;align-items:start}
+    .list-tools{display:flex;gap:8px;margin-bottom:12px}.list-tools input{min-width:0}
+    .client-list{display:flex;flex-direction:column;gap:8px;max-height:650px;overflow:auto}
+    .client{width:100%;text-align:left;background:#fff;color:#17212b;border:1px solid #dce3e8;padding:12px;border-radius:9px}
+    .client.selected{border-color:#176b63;box-shadow:0 0 0 2px #176b6322}.client strong{display:block;margin-bottom:4px}.client small{color:#657582}
+    .pill{display:inline-block;border-radius:999px;padding:3px 8px;font-size:.75rem;background:#e9f2f0;color:#17564f;margin-top:8px}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.wide{grid-column:1/-1}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.answer-box{background:#f6f8f9;border:1px solid #e0e6ea;border-radius:8px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto;font: .83rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .status-line{font-size:.9rem;margin-top:10px;min-height:1.2em}.section{margin-top:22px}.empty{padding:22px;text-align:center;color:#687985}
+    @media(max-width:850px){.workspace{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.client-list{max-height:340px}}
+    @media(max-width:520px){.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr 1fr}.panel{padding:16px}.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.list-tools{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div><div class="brand">KF BIZ</div><small>Private client management</small></div>
+    <div id="topActions" class="hidden"><span id="signedInAs" style="margin-right:12px;font-size:.85rem"></span><button id="logoutBtn" class="secondary">Sign out</button></div>
+  </header>
+
+  <main>
+    <section id="loginPanel" class="panel login">
+      <h1>Administrator sign in</h1>
+      <p class="muted">This dashboard is for authorised KF Biz administrators only.</p>
+      <form id="loginForm">
+        <div class="field"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
+        <button id="loginBtn" type="submit">Sign in</button>
+      </form>
+      <div id="loginMessage" class="status-line" role="status"></div>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div>
+        <h1>Client dashboard</h1>
+        <p class="muted">Review business-plan submissions, manage follow-ups, and track potential revenue.</p>
+      </div>
+      <div class="grid">
+        <div class="metric"><span>Total submissions</span><strong id="metricTotal">0</strong></div>
+        <div class="metric"><span>Active opportunities</span><strong id="metricActive">0</strong></div>
+        <div class="metric"><span>Follow-ups due</span><strong id="metricFollowups">0</strong></div>
+        <div class="metric"><span>Recorded revenue</span><strong id="metricRevenue">€0.00</strong></div>
+      </div>
+      <div id="globalMessage" class="status-line" role="status"></div>
+      <div class="workspace">
+        <section class="panel">
+          <h2>Submissions</h2>
+          <div class="list-tools"><input id="searchBox" type="search" placeholder="Search name or email"><select id="statusFilter" aria-label="Filter by status"><option value="">All statuses</option><option value="new_submission">New submission</option><option value="reviewing">Reviewing</option><option value="contacted">Contacted</option><option value="consultation_scheduled">Consultation scheduled</option><option value="quotation_sent">Quotation sent</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="declined">Declined</option><option value="on_hold">On hold</option></select></div>
+          <div id="clientList" class="client-list"><div class="empty">Loading submissions…</div></div>
+          <div class="actions"><button id="refreshBtn" class="secondary" type="button">Refresh list</button></div>
+        </section>
+
+        <section class="panel" id="detailPanel">
+          <div id="noSelection" class="empty">Select a submission to view its details and manage follow-up.</div>
+          <div id="detailContent" class="hidden">
+            <h2 id="clientHeading">Client details</h2>
+            <p id="submissionMeta" class="muted"></p>
+            <form id="managementForm">
+              <div class="form-grid">
+                <div class="field"><label for="status">Status</label><select id="status"><option value="new_submission">New submission</option><option value="reviewing">Reviewing</option><option value="contacted">Contacted</option><option value="consultation_scheduled">Consultation scheduled</option><option value="quotation_sent">Quotation sent</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="declined">Declined</option><option value="on_hold">On hold</option></select></div>
+                <div class="field"><label for="industry">Industry</label><input id="industry" placeholder="e.g. restaurant, cleaning"></div>
+                <div class="field"><label for="businessStage">Business stage</label><select id="businessStage"><option value="">Not specified</option><option>Idea stage</option><option>Preparing to start</option><option>Recently started</option><option>Existing business</option><option>Expanding</option></select></div>
+                <div class="field"><label for="serviceNeeded">Service needed</label><input id="serviceNeeded" placeholder="e.g. business plan"></div>
+                <div class="field wide"><label for="nextAction">Next action</label><input id="nextAction" placeholder="e.g. Send consultation options"></div>
+                <div class="field"><label for="followUpDate">Follow-up date</label><input id="followUpDate" type="date"></div>
+                <div class="field"><label for="estimatedFee">Estimated fee (€)</label><input id="estimatedFee" type="number" min="0" step="0.01" placeholder="0.00"></div>
+                <div class="field"><label for="actualRevenue">Actual revenue (€)</label><input id="actualRevenue" type="number" min="0" step="0.01" placeholder="0.00"></div>
+                <div class="field wide"><label for="internalNotes">Private internal notes</label><textarea id="internalNotes" placeholder="Keep concise notes relevant to client management."></textarea></div>
+              </div>
+              <div class="actions"><button id="saveBtn" type="submit">Save client details</button><button id="clearBtn" class="secondary" type="button">Clear unsaved edits</button></div>
+              <div id="saveMessage" class="status-line" role="status"></div>
+            </form>
+            <div class="section"><h2>Submitted business plan answers</h2><div id="answers" class="answer-box">No answers loaded.</div></div>
+          </div>
+        </section>
+      </div>
+      <p class="notice section">Privacy reminder: client submissions and internal notes are confidential. Sign out when finished, especially on a shared computer.</p>
+    </section>
+  </main>
+
+<script>
+(() => {
+  'use strict';
+  const SUPABASE_URL = 'https://wtkvxytoqrpnssfcobky.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_qzvUQZmQLcAyyeH9SvcqbA_KDmrTO7X';
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const $ = (id) => document.getElementById(id);
+  const statusNames = {
+    new_submission:'New submission', reviewing:'Reviewing', contacted:'Contacted',
+    consultation_scheduled:'Consultation scheduled', quotation_sent:'Quotation sent',
+    in_progress:'In progress', completed:'Completed', declined:'Declined', on_hold:'On hold'
+  };
+  let currentUser = null;
+  let submissions = [];
+  let management = new Map();
+  let selectedId = null;
+
+  function showMessage(id, message, isError = false) {
+    const el = $(id); el.textContent = message || ''; el.className = 'status-line' + (isError ? ' error' : '');
+  }
+  function setSignedIn(user) {
+    $('loginPanel').classList.toggle('hidden', !!user);
+    $('dashboard').classList.toggle('hidden', !user);
+    $('topActions').classList.toggle('hidden', !user);
+    $('signedInAs').textContent = user ? user.email : '';
+  }
+  function money(value) {
+    return new Intl.NumberFormat('en-FI', {style:'currency',currency:'EUR'}).format(Number(value || 0));
+  }
+  function dateLabel(value) {
+    if (!value) return 'No follow-up date';
+    const d = new Date(value + 'T00:00:00');
+    return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('en-FI');
+  }
+  async function checkAdmin(user) {
+    const {data, error} = await db.from('kfbiz_dashboard_admins').select('user_id').eq('user_id', user.id).maybeSingle();
+    if (error) throw error;
+    if (!data) {
+      await db.auth.signOut();
+      throw new Error('This account is signed in but is not authorised to use the KF Biz dashboard.');
+    }
+  }
+  async function startSession(user) {
+    currentUser = user;
+    try {
+      await checkAdmin(user);
+      setSignedIn(user);
+      await loadData();
+    } catch (error) {
+      currentUser = null; setSignedIn(null);
+      showMessage('loginMessage', error.message || 'Could not verify administrator access.', true);
+    }
+  }
+  async function loadData() {
+    showMessage('globalMessage','Loading client data…');
+    const [subResult, mgmtResult] = await Promise.all([
+      db.from('business_plan_submissions').select('id, submitted_at, client_name, client_email, answers, consented_at, source').order('submitted_at',{ascending:false}),
+      db.from('business_plan_client_management').select('*')
+    ]);
+    if (subResult.error) throw new Error('Could not load submissions: ' + subResult.error.message);
+    if (mgmtResult.error) throw new Error('Could not load client-management data: ' + mgmtResult.error.message);
+    submissions = subResult.data || [];
+    management = new Map((mgmtResult.data || []).map(row => [row.submission_id,row]));
+    renderMetrics(); renderList();
+    if (selectedId && submissions.some(s => s.id === selectedId)) renderDetails(selectedId);
+    else if (submissions.length) renderDetails(submissions[0].id);
+    else clearDetails();
+    showMessage('globalMessage', 'Loaded ' + submissions.length + ' submission(s).');
+  }
+  function renderMetrics() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const active = submissions.filter(s => {
+      const st = (management.get(s.id) || {}).status || 'new_submission';
+      return !['completed','declined'].includes(st);
+    });
+    const due = submissions.filter(s => {
+      const row = management.get(s.id) || {};
+      return row.follow_up_date && new Date(row.follow_up_date + 'T00:00:00') <= today && !['completed','declined'].includes(row.status);
+    });
+    const revenue = submissions.reduce((sum,s) => sum + Number((management.get(s.id) || {}).actual_revenue || 0),0);
+    $('metricTotal').textContent = submissions.length;
+    $('metricActive').textContent = active.length;
+    $('metricFollowups').textContent = due.length;
+    $('metricRevenue').textContent = money(revenue);
+  }
+  function renderList() {
+    const q = $('searchBox').value.trim().toLowerCase();
+    const filter = $('statusFilter').value;
+    const rows = submissions.filter(s => {
+      const m = management.get(s.id) || {};
+      return (!q || (s.client_name || '').toLowerCase().includes(q) || (s.client_email || '').toLowerCase().includes(q))
+        && (!filter || (m.status || 'new_submission') === filter);
+    });
+    const list = $('clientList'); list.replaceChildren();
+    if (!rows.length) { const empty = document.createElement('div'); empty.className='empty'; empty.textContent='No matching submissions.'; list.appendChild(empty); return; }
+    rows.forEach(s => {
+      const m = management.get(s.id) || {};
+      const b = document.createElement('button');
+      b.type='button'; b.className='client' + (s.id === selectedId ? ' selected':'');
+      const name = document.createElement('strong'); name.textContent = s.client_name || 'Unnamed client';
+      const email = document.createElement('small'); email.textContent = s.client_email || 'No email';
+      const line = document.createElement('div'); line.className='pill'; line.textContent = statusNames[m.status || 'new_submission'] || 'New submission';
+      const date = document.createElement('small'); date.style.display='block'; date.style.marginTop='6px'; date.textContent='Submitted ' + new Date(s.submitted_at).toLocaleDateString('en-FI');
+      b.append(name,email,line,date); b.addEventListener('click',()=>renderDetails(s.id)); list.appendChild(b);
+    });
+  }
+  function clearDetails() {
+    selectedId = null; $('noSelection').classList.remove('hidden'); $('detailContent').classList.add('hidden'); renderList();
+  }
+  function renderDetails(id) {
+    const s = submissions.find(item => item.id === id); if (!s) return;
+    selectedId = id;
+    const m = management.get(id) || {};
+    $('noSelection').classList.add('hidden'); $('detailContent').classList.remove('hidden');
+    $('clientHeading').textContent = s.client_name || 'Unnamed client';
+    $('submissionMeta').textContent = (s.client_email || 'No email') + ' · Submitted ' + new Date(s.submitted_at).toLocaleString('en-FI') + ' · Source: ' + (s.source || 'Not recorded');
+    $('status').value = m.status || 'new_submission';
+    $('industry').value = m.industry || '';
+    $('businessStage').value = m.business_stage || '';
+    $('serviceNeeded').value = m.service_needed || '';
+    $('nextAction').value = m.next_action || '';
+    $('followUpDate').value = m.follow_up_date || '';
+    $('estimatedFee').value = m.estimated_fee ?? '';
+    $('actualRevenue').value = m.actual_revenue ?? '';
+    $('internalNotes').value = m.internal_notes || '';
+    $('answers').textContent = JSON.stringify(s.answers || {}, null, 2);
+    showMessage('saveMessage','');
+    renderList();
+  }
+  $('loginForm').addEventListener('submit', async event => {
+    event.preventDefault(); $('loginBtn').disabled = true; showMessage('loginMessage','Signing in…');
+    const {data,error} = await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    $('loginBtn').disabled = false;
+    if (error) { showMessage('loginMessage',error.message,true); return; }
+    await startSession(data.user);
+  });
+  $('logoutBtn').addEventListener('click', async () => {
+    await db.auth.signOut(); currentUser=null; submissions=[]; management.clear(); selectedId=null;
+    setSignedIn(null); $('password').value=''; showMessage('loginMessage','You have signed out.'); $('clientList').replaceChildren();
+  });
+  $('searchBox').addEventListener('input',renderList);
+  $('statusFilter').addEventListener('change',renderList);
+  $('refreshBtn').addEventListener('click',async()=>{try{await loadData()}catch(e){showMessage('globalMessage',e.message,true)}});
+  $('clearBtn').addEventListener('click',()=>{if(selectedId)renderDetails(selectedId)});
+  $('managementForm').addEventListener('submit',async event=>{
+    event.preventDefault(); if(!selectedId) return;
+    $('saveBtn').disabled=true; showMessage('saveMessage','Saving…');
+    const existing = management.get(selectedId) || {};
+    const numberOrNull = id => $(id).value === '' ? null : Number($(id).value);
+    const updates = {
+      submission_id:selectedId,
+      status:$('status').value,
+      industry:$('industry').value.trim() || null,
+      business_stage:$('businessStage').value || null,
+      service_needed:$('serviceNeeded').value.trim() || null,
+      next_action:$('nextAction').value.trim() || null,
+      follow_up_date:$('followUpDate').value || null,
+      estimated_fee:numberOrNull('estimatedFee'),
+      actual_revenue:numberOrNull('actualRevenue'),
+      internal_notes:$('internalNotes').value.trim() || null,
+      converted_at: $('status').value === 'completed' ? (existing.converted_at || new Date().toISOString()) : existing.converted_at || null,
+      updated_at:new Date().toISOString()
+    };
+    const {data,error} = await db.from('business_plan_client_management').upsert(updates,{onConflict:'submission_id'}).select().single();
+    $('saveBtn').disabled=false;
+    if(error){showMessage('saveMessage','Save failed: '+error.message,true);return;}
+    management.set(selectedId,data); renderMetrics(); renderList(); showMessage('saveMessage','Saved successfully.');
+  });
+  db.auth.onAuthStateChange((event,session)=>{
+    if(event==='SIGNED_OUT'){currentUser=null;setSignedIn(null);}
+  });
+  (async()=>{
+    const {data,error}=await db.auth.getSession();
+    if(error){showMessage('loginMessage',error.message,true);return;}
+    if(data.session?.user) await startSession(data.session.user);
+  })().catch(e=>showMessage('loginMessage',e.message,true));
+})();
+</script>
+</body>
+</html>
