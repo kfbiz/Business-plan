@@ -25,7 +25,15 @@
     .client.selected{border-color:#176b63;box-shadow:0 0 0 2px #176b6322}.client strong{display:block;margin-bottom:4px}.client small{color:#657582}
     .pill{display:inline-block;border-radius:999px;padding:3px 8px;font-size:.75rem;background:#e9f2f0;color:#17564f;margin-top:8px}
     .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.wide{grid-column:1/-1}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.answer-box{background:#f6f8f9;border:1px solid #e0e6ea;border-radius:8px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto;font: .83rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .answer-list{display:grid;gap:12px;margin-top:12px}
+    .answer-card{border:1px solid #d9e3e8;border-radius:10px;overflow:hidden;background:#fff}
+    .answer-question{padding:11px 14px;background:#edf3f5;color:#243f4c;font-weight:750;line-height:1.45;border-bottom:1px solid #d9e3e8;overflow-wrap:anywhere}
+    .answer-value{padding:13px 14px;line-height:1.65;color:#24323b;white-space:pre-wrap;overflow-wrap:anywhere}
+    .answer-value.empty-answer{color:#77858e;font-style:italic}
+    .answer-group{display:grid;gap:10px}
+    .answer-subitem{border-left:3px solid #c7d9d7;padding:8px 11px;background:#f8fafb;border-radius:0 7px 7px 0}
+    .answer-subquestion{font-weight:700;color:#425965;font-size:.85rem;margin-bottom:4px}
     .status-line{font-size:.9rem;margin-top:10px;min-height:1.2em}.section{margin-top:22px}.empty{padding:22px;text-align:center;color:#687985}
     @media(max-width:850px){.workspace{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.client-list{max-height:340px}}
     @media(max-width:520px){.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr 1fr}.panel{padding:16px}.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.list-tools{flex-direction:column}}
@@ -89,7 +97,7 @@
               <div class="actions"><button id="saveBtn" type="submit">Save client details</button><button id="clearBtn" class="secondary" type="button">Clear unsaved edits</button></div>
               <div id="saveMessage" class="status-line" role="status"></div>
             </form>
-            <div class="section"><h2>Submitted business plan answers</h2><div id="answers" class="answer-box">No answers loaded.</div></div>
+            <div class="section"><h2>Submitted business plan answers</h2><p class="muted">Each question is shown separately, with the client's answer directly underneath.</p><div id="answers" class="answer-list"><div class="empty">No answers loaded.</div></div></div>
           </div>
         </section>
       </div>
@@ -206,6 +214,57 @@
   function clearDetails() {
     selectedId = null; $('noSelection').classList.remove('hidden'); $('detailContent').classList.add('hidden'); renderList();
   }
+  function answerText(value) {
+    if (value === null || value === undefined || value === '') return 'No answer provided';
+    if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+    if (Array.isArray(value)) return value.length ? value.map(item => {
+      if (item && typeof item === 'object') return Object.entries(item).map(([k,v]) => humanizeKey(k) + ': ' + answerText(v)).join('\\n');
+      return String(item);
+    }).join('\\n') : 'No answer provided';
+    if (typeof value === 'object') return Object.entries(value).map(([k,v]) => humanizeKey(k) + ': ' + answerText(v)).join('\\n');
+    return String(value);
+  }
+  function humanizeKey(key) {
+    return String(key).replace(/[_-]+/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/\\s+/g, ' ').trim().replace(/^./, ch => ch.toUpperCase());
+  }
+  function renderAnswers(answers) {
+    const container = $('answers');
+    container.replaceChildren();
+    if (answers === null || answers === undefined || (typeof answers === 'object' && !Array.isArray(answers) && Object.keys(answers).length === 0) || (Array.isArray(answers) && answers.length === 0)) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'No answers were included in this submission.';
+      container.appendChild(empty);
+      return;
+    }
+    const entries = Array.isArray(answers)
+      ? answers.map((item, index) => {
+          if (item && typeof item === 'object' && ('question' in item || 'label' in item || 'title' in item)) {
+            const question = item.question ?? item.label ?? item.title ?? ('Question ' + (index + 1));
+            const answer = item.answer ?? item.value ?? item.response ?? Object.fromEntries(Object.entries(item).filter(([key]) => !['question','label','title'].includes(key)));
+            return [question, answer];
+          }
+          return ['Question ' + (index + 1), item];
+        })
+      : typeof answers === 'object'
+        ? Object.entries(answers)
+        : [['Answer', answers]];
+    entries.forEach(([question, value]) => {
+      const card = document.createElement('article');
+      card.className = 'answer-card';
+      const heading = document.createElement('div');
+      heading.className = 'answer-question';
+      heading.textContent = humanizeKey(question);
+      const answer = document.createElement('div');
+      answer.className = 'answer-value';
+      const text = answerText(value);
+      answer.textContent = text;
+      if (text === 'No answer provided') answer.classList.add('empty-answer');
+      card.append(heading, answer);
+      container.appendChild(card);
+    });
+  }
+
   function renderDetails(id) {
     const s = submissions.find(item => item.id === id); if (!s) return;
     selectedId = id;
@@ -222,7 +281,7 @@
     $('estimatedFee').value = m.estimated_fee ?? '';
     $('actualRevenue').value = m.actual_revenue ?? '';
     $('internalNotes').value = m.internal_notes || '';
-    $('answers').textContent = JSON.stringify(s.answers || {}, null, 2);
+    renderAnswers(s.answers);
     showMessage('saveMessage','');
     renderList();
   }
