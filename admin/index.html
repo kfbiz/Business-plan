@@ -117,6 +117,84 @@
     consultation_scheduled:'Consultation scheduled', quotation_sent:'Quotation sent',
     in_progress:'In progress', completed:'Completed', declined:'Declined', on_hold:'On hold'
   };
+  // Use the exact question wording from the client questionnaire, not the short database field IDs.
+  const questionLabels = {
+    "purpose": "What is this business plan for?",
+    "stage": "What stage is the business at?",
+    "businessName": "Proposed or registered business name",
+    "companyForm": "What legal form are you considering?",
+    "location": "Where will the business operate?",
+    "industry": "What industry or field is it in?",
+    "startDate": "When do you plan to start?",
+    "summary": "Describe your business idea simply: what will you do, for whom, and how?",
+    "motivation": "Why do you want to start or develop this business? Where did the idea come from?",
+    "goals": "What are your main goals, and how do you imagine the business developing over time?",
+    "hirePlanChoice": "Do you plan to employ people?",
+    "founderProfile": "Who will establish and run the business? Describe relevant experience, education and skills.",
+    "skills": "Which skills do you or your team already have?",
+    "readiness": "What have you already done to prepare?",
+    "gaps": "What skills or knowledge are missing, and how will you obtain them?",
+    "accounting": "How will you organise invoicing, bookkeeping, expense records and financial administration?",
+    "responsibilities": "If there are co-founders or key people, how will responsibilities be divided?",
+    "products": "What products or services will you offer?",
+    "pricingApproach": "How will the offer be priced?",
+    "customerNeed": "What customer need or problem does your offer address?",
+    "advantages": "Which features could make your offer attractive compared with alternatives?",
+    "competitiveEvidence": "How does your offer compare with alternatives, and what evidence supports your view?",
+    "deliveryMethod": "How and where will customers receive the product or service?",
+    "intellectualProperty": "Are trademarks, designs, patents or other intellectual-property rights relevant?",
+    "customers": "Who are your target customers, and what do they need?",
+    "demandEvidence": "What evidence suggests there is demand for your offer?",
+    "marketArea": "What geographical area or online market will you serve?",
+    "competitors": "Who are your main competitors or alternatives, and what do they offer?",
+    "positioning": "How will your business stand out in this market?",
+    "partners": "What partners, suppliers or professional networks may be important?",
+    "marketGaps": "What market assumptions or questions still need to be checked?",
+    "marketingChannels": "Which marketing channels do you plan to use?",
+    "marketingPlan": "Why are these channels suitable for your target customers, and how will you use them?",
+    "brandImage": "What brand image or reputation do you want to build?",
+    "marketingReview": "How will you review whether marketing is working?",
+    "marketingOwner": "Who will be responsible for marketing and creating content?",
+    "salesChannels": "Where or how will customers buy from you?",
+    "salesProcess": "Describe the sales process from first contact to purchase and delivery.",
+    "salesOwner": "Who will handle sales and customer service?",
+    "retention": "How will you build trust, encourage repeat business and earn referrals?",
+    "workflow": "What are the main steps in delivering your product or service?",
+    "resources": "What premises, equipment, software, materials or suppliers will you need?",
+    "compliance": "What permits, notifications, registrations, qualifications or industry rules may apply in Finland?",
+    "insurance": "What insurance or other protection should you investigate?",
+    "responsibilityPlan": "How will your business act responsibly towards customers, workers, society or the environment?",
+    "riskTypes": "Which risks could affect your business?",
+    "mainRisks": "What are your most important risks, and how might they affect the business?",
+    "riskPlan": "How will you reduce risks or respond if something goes wrong?",
+    "strengths": "SWOT — What are your internal strengths?",
+    "weaknesses": "SWOT — What are your internal weaknesses?",
+    "opportunities": "SWOT — What external opportunities could help the business?",
+    "threats": "SWOT — What external threats could harm the business?",
+    "personalLivelihood": "How will you plan for your personal livelihood while developing the business?",
+    "workingWeek": "What will a typical working week look like?",
+    "holidays": "How will you plan holidays, days off or unexpected absences?",
+    "wellbeing": "How will you maintain your health, wellbeing and ability to continue working?",
+    "staffNeeds": "What staff will you need, for which roles and at what stage?",
+    "recruitment": "How will you recruit suitable people?",
+    "supervision": "What experience or support prepares you to supervise employees?",
+    "orientation": "How will you orient new employees and explain duties and safety practices?",
+    "staffWellbeing": "How will you support staff wellbeing, skills development and job satisfaction?",
+    "industryTrends": "What trends or changes could affect your industry in the next few years?",
+    "futureCustomers": "How might your customers and their needs change over time?",
+    "development": "How will you keep your products or services relevant and improve them?",
+    "vision": "What would you like the company to look like in about five years, and how might you get there?",
+    "values": "What values matter to the company, and how will they guide everyday decisions?",
+    "milestones": "What actions must be completed before launch and during the first stage?",
+    "supportNeeded": "What questions, advice or support do you still need?",
+    "fundingUse": "If seeking funding, what business purpose would the funding serve?",
+    "fullTimePlan": "Do you plan to work full-time in the business? Explain the intended arrangement.",
+    "startTiming": "Have you already started full-time business activity, or are you still preparing? Include dates if known.",
+    "livelihoodPlan": "How do you plan to support yourself during the initial stage of entrepreneurship?",
+    "fundingNeed": "What business need or development goal makes external financing relevant?",
+    "fundingAlternatives": "What alternatives have you considered, and why might financing be appropriate?",
+    "repaymentBasis": "What operational factors could help the business meet its obligations?"
+  };
   let currentUser = null;
   let submissions = [];
   let management = new Map();
@@ -225,7 +303,9 @@
     return String(value);
   }
   function humanizeKey(key) {
-    return String(key).replace(/[_-]+/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/\\s+/g, ' ').trim().replace(/^./, ch => ch.toUpperCase());
+    const raw = String(key);
+    if (questionLabels[raw]) return questionLabels[raw];
+    return raw.replace(/[_-]+/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/\\s+/g, ' ').trim().replace(/^./, ch => ch.toUpperCase());
   }
   function renderAnswers(answers) {
     const container = $('answers');
@@ -254,7 +334,7 @@
       card.className = 'answer-card';
       const heading = document.createElement('div');
       heading.className = 'answer-question';
-      heading.textContent = humanizeKey(question);
+      heading.textContent = questionLabels[String(question)] || humanizeKey(question);
       const answer = document.createElement('div');
       answer.className = 'answer-value';
       const text = answerText(value);
